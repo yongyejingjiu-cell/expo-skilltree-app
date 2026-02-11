@@ -36,6 +36,7 @@ const DEFAULT_USER_PROGRESS: UserProgress = {
     },
     unlockedAvatarItems: ['type1', 'hair1', 'robe1', 'staff1'],
     title: '新米冒険者',
+    lastCelebratedLevel: 1,
 };
 
 // ========================================
@@ -228,6 +229,15 @@ export const recordTodayActivity = async (): Promise<UserProgress> => {
     }
 
     return progress;
+};
+
+/**
+ * レベルアップお祝い演出を表示済みとして記録
+ */
+export const markLevelAsCelebrated = async (level: number): Promise<void> => {
+    const progress = await loadUserProgress();
+    progress.lastCelebratedLevel = level;
+    await saveUserProgress(progress);
 };
 
 /**

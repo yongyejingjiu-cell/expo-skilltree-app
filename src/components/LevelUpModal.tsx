@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Modal, Dimensions } from 'react-native';
-import LottieView from 'lottie-react-native';
+import { View, Text, StyleSheet, Modal, Dimensions, StatusBar } from 'react-native';
 import { colors, fontSizes, fontWeights, spacing, borderRadius } from '../theme';
 import { ScaleButton } from './ScaleButton';
 import { hapticFeedback } from '../utils/haptics';
+import { Confetti } from './Confetti';
 
 interface Props {
     visible: boolean;
@@ -11,24 +11,16 @@ interface Props {
     onClose: () => void;
 }
 
-const { width } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
 /**
  * レベルアップ時に表示するモーダルコンポーネント
- * Lottieアニメーションと豪華な演出を含む
  */
 const LevelUpModal: React.FC<Props> = ({ visible, level, onClose }) => {
-    const animationRef = useRef<LottieView>(null);
-
     useEffect(() => {
         if (visible) {
-            // アニメーション再生
-            setTimeout(() => {
-                animationRef.current?.play();
-            }, 100);
-
-            // 成功時のHapticsフィードバック
             hapticFeedback.success();
+            console.log('LevelUpModal is now visible, custom confetti system started');
         }
     }, [visible]);
 
@@ -40,21 +32,17 @@ const LevelUpModal: React.FC<Props> = ({ visible, level, onClose }) => {
             visible={visible}
             animationType="fade"
             onRequestClose={onClose}
-            statusBarTranslucent
+            statusBarTranslucent={true}
         >
-            <View style={styles.container}>
+            <View style={styles.modalContainer}>
+                {/* 1. 背景レイヤーとしての暗転 */}
                 <View style={styles.overlay} />
+
+                {/* 2. カスタム演出レイヤー (Lottieの代わり) */}
+                {visible && <Confetti />}
+
+                {/* 3. 中央のコンテンツボックス */}
                 <View style={styles.content}>
-                    <View style={styles.lottieContainer}>
-                        <LottieView
-                            ref={animationRef}
-                            source={require('../assets/animations/confetti.json')}
-                            autoPlay={false}
-                            loop={false}
-                            style={styles.lottie}
-                            resizeMode="cover"
-                        />
-                    </View>
                     <Text style={styles.congratsTitle}>CONGRATULATIONS!</Text>
                     <Text style={styles.title}>LEVEL UP!</Text>
 
@@ -76,44 +64,26 @@ const LevelUpModal: React.FC<Props> = ({ visible, level, onClose }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
+    modalContainer: {
         flex: 1,
-        width: '100%',
-        height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'transparent',
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        zIndex: 1,
     },
     content: {
-        width: width * 0.85,
+        width: SCREEN_WIDTH * 0.85,
         backgroundColor: colors.backgroundCard,
         borderRadius: borderRadius.xl,
         padding: spacing.xl,
         alignItems: 'center',
         borderWidth: 2,
         borderColor: colors.accent,
-        elevation: 10,
-        shadowColor: colors.accent,
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.5,
-        shadowRadius: 20,
+        elevation: 10, // Androidでの重なり順を保証
         zIndex: 10,
-    },
-    lottieContainer: {
-        position: 'absolute',
-        top: -100,
-        width: 300,
-        height: 300,
-        pointerEvents: 'none',
-        zIndex: 11,
-    },
-    lottie: {
-        width: '100%',
-        height: '100%',
     },
     congratsTitle: {
         fontSize: fontSizes.lg,

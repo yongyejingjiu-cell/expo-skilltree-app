@@ -42,12 +42,18 @@ function getNodeStatus(
     masteryMap: SkillMasteryMap,
     edges: SkillTreeEdge[],
     allNodes: SkillTreeNode[],
+    skillsMap: Record<string, Skill>,
 ): SkillNodeStatus {
     const mastery = masteryMap[node.skillId];
     const masteryLevel = mastery?.masteryLevel ?? 0;
+    const skill = skillsMap[node.skillId];
+    const totalQuizzes = skill?.quizzes?.length ?? 0;
+    const quizCorrectCount = mastery?.quizCorrectCount ?? 0;
 
-    // しきい値以上なら習得済み
-    if (masteryLevel >= node.masteryThreshold) {
+    // しきい値以上、またはクイズ全問正解なら習得済み
+    const isMastered = masteryLevel >= node.masteryThreshold || (totalQuizzes > 0 && quizCorrectCount >= totalQuizzes);
+
+    if (isMastered) {
         return 'mastered';
     }
 
@@ -65,8 +71,13 @@ function getNodeStatus(
     const allPrereqsMastered = prerequisites.every(preId => {
         const preNode = allNodes.find(n => n.skillId === preId);
         if (!preNode) return true;
-        const preMastery = masteryMap[preId]?.masteryLevel ?? 0;
-        return preMastery >= preNode.masteryThreshold;
+        const preMasteryMap = masteryMap[preId];
+        const preMasteryLevel = preMasteryMap?.masteryLevel ?? 0;
+        const preSkill = skillsMap[preId];
+        const preTotalQuizzes = preSkill?.quizzes?.length ?? 0;
+        const preQuizCorrectCount = preMasteryMap?.quizCorrectCount ?? 0;
+
+        return preMasteryLevel >= preNode.masteryThreshold || (preTotalQuizzes > 0 && preQuizCorrectCount >= preTotalQuizzes);
     });
 
     if (!allPrereqsMastered) {
@@ -128,27 +139,27 @@ export default function SkillTreeScreen({ route, navigation }: Props) {
         }, [])
     );
 
-    // ノードの状態を計算
-    const nodeStatuses = useMemo(() => {
-        if (!tree) return {};
-        const statuses: Record<string, SkillNodeStatus> = {};
-        tree.nodes.forEach(node => {
-            statuses[node.skillId] = getNodeStatus(node, masteryMap, tree.edges, tree.nodes);
-        });
-        return statuses;
-    }, [tree, masteryMap]);
-
-    // 習得済みの数
-    const masteredCount = Object.values(nodeStatuses).filter(s => s === 'mastered').length;
-    const totalNodes = tree?.nodes.length ?? 0;
-
-    // スキルデータのMapを作成
+    // スキルデータのMapを作成（nodeStatusesの計算に使用するため先に宣言）
     const skillsMap = useMemo(() => {
         const skills = getSkillsByCourse(courseId);
         const map: Record<string, Skill> = {};
         skills.forEach(s => map[s.id] = s);
         return map;
     }, [courseId]);
+
+    // ノードの状態を計算
+    const nodeStatuses = useMemo(() => {
+        if (!tree) return {};
+        const statuses: Record<string, SkillNodeStatus> = {};
+        tree.nodes.forEach(node => {
+            statuses[node.skillId] = getNodeStatus(node, masteryMap, tree.edges, tree.nodes, skillsMap);
+        });
+        return statuses;
+    }, [tree, masteryMap, skillsMap]);
+
+    // 習得済みの数
+    const masteredCount = Object.values(nodeStatuses).filter(s => s === 'mastered').length;
+    const totalNodes = tree?.nodes.length ?? 0;
 
     // ツリーが見つからない場合
     if (!tree || !course) {

@@ -19,9 +19,9 @@ import { RootStackParamList, SkillMastery } from '../types';
 import { colors, spacing, borderRadius, fontSizes, fontWeights, shadows } from '../theme';
 import QuizCard from '../components/QuizCard';
 import { getSkillById } from '../data/skills';
-import { getSkillMastery, recordQuizCorrect, recordSkillStudy, getTodayDateString } from '../storage';
+import { getSkillMastery, recordQuizCorrect, recordSkillStudy, getTodayDateString, markLevelAsCelebrated, loadUserProgress } from '../storage';
 import { useTheme } from '../context/ThemeContext';
-import { ThemedBackground } from '../components';
+import { ThemedBackground, LevelUpModal } from '../components';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SkillDetail'>;
 
@@ -34,6 +34,12 @@ export default function SkillDetailScreen({ route, navigation }: Props) {
 
     const [mastery, setMastery] = useState<SkillMastery | null>(null);
     const [quizAnsweredToday, setQuizAnsweredToday] = useState(false);
+    const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
+    const [showLevelUp, setShowLevelUp] = useState(false);
+    const [currentLevel, setCurrentLevel] = useState(1);
+
+    // 全問クリアしたかどうかの判定 (熟練度100% または クイズ正解数がクイズ総数に達したか)
+    const allQuizzesCleared = mastery ? (mastery.masteryLevel >= 100 || (skill?.quizzes && mastery.quizCorrectCount >= skill.quizzes.length)) : false;
 
     // 熟練度読み込み
     useEffect(() => {
@@ -41,29 +47,65 @@ export default function SkillDetailScreen({ route, navigation }: Props) {
             const m = await getSkillMastery(skillId);
             setMastery(m);
 
-            // 今日すでにクイズを回答したかチェック
+            // ユーザー情報を取得して現在のレベルを保持
+            const progress = await loadUserProgress();
+            setCurrentLevel(progress.level);
+
+            // 未お祝いのレベルアップがあれば表示
+            if (progress.level > (progress.lastCelebratedLevel || 1)) {
+                setShowLevelUp(true);
+            }
+
+            // 今日すでにクイズを回答したかチェック (全問解き終わっているか)
             const today = getTodayDateString();
-            if (m.lastStudiedAt && m.lastStudiedAt.startsWith(today) && m.quizCorrectCount > 0) {
+            const totalQuizzes = skill?.quizzes?.length || 1;
+            if (m.lastStudiedAt && m.lastStudiedAt.startsWith(today) && m.quizCorrectCount >= totalQuizzes) {
                 setQuizAnsweredToday(true);
+            }
+
+            // 進捗に合わせて現在のクイズインデックスを設定 (既に解いた問題の次からスタート)
+            if (m.quizCorrectCount < totalQuizzes) {
+                setCurrentQuizIndex(m.quizCorrectCount);
+            } else {
+                setCurrentQuizIndex(0); // 全問達成済みなら最初から見れるようにしておく
             }
 
             // 閲覧記録
             await recordSkillStudy(skillId);
         };
         load();
-    }, [skillId]);
+    }, [skillId, skill]);
 
     // クイズ正解時のコールバック
     const handleQuizCorrect = useCallback(async () => {
         if (!skill) return;
         try {
-            const result = await recordQuizCorrect(skillId, skill.quiz.xpReward);
+            // 現在のクイズのXP報酬を使用
+            const xpReward = skill.quizzes[currentQuizIndex]?.xpReward ?? 20;
+            const result = await recordQuizCorrect(skillId, xpReward);
+
+            // レベルアップ判定
+            if (result.progress.level > (result.progress.lastCelebratedLevel || 1)) {
+                setShowLevelUp(true);
+                setCurrentLevel(result.progress.level);
+            }
+
             setMastery(result.mastery);
-            setQuizAnsweredToday(true);
+
+            // クイズ全問クリアしたかチェック
+            if (result.mastery.masteryLevel >= 100 || result.mastery.quizCorrectCount >= skill.quizzes.length) {
+                setQuizAnsweredToday(true);
+            }
         } catch (error) {
             console.error('Failed to record quiz:', error);
         }
-    }, [skillId, skill]);
+    }, [skillId, skill, currentQuizIndex]);
+
+    const handleNextQuiz = useCallback(() => {
+        if (skill && currentQuizIndex < skill.quizzes.length - 1) {
+            setCurrentQuizIndex(prev => prev + 1);
+        }
+    }, [skill, currentQuizIndex]);
 
     // スキルが見つからない場合
     if (!skill) {
@@ -208,9 +250,13 @@ export default function SkillDetailScreen({ route, navigation }: Props) {
                 {/* ミニクイズ */}
                 <View style={styles.section}>
                     <QuizCard
-                        quiz={skill.quiz}
+                        quiz={skill.quizzes[currentQuizIndex] || skill.quizzes[0]}
                         alreadyAnswered={quizAnsweredToday}
                         onCorrectAnswer={handleQuizCorrect}
+                        currentQuizIndex={currentQuizIndex}
+                        totalQuizzes={skill.quizzes.length}
+                        onNextQuiz={handleNextQuiz}
+                        allQuizzesCleared={allQuizzesCleared}
                     />
                 </View>
 
@@ -224,6 +270,15 @@ export default function SkillDetailScreen({ route, navigation }: Props) {
                     </View>
                 </View>
             </ScrollView>
+
+            <LevelUpModal
+                visible={showLevelUp}
+                level={currentLevel}
+                onClose={async () => {
+                    setShowLevelUp(false);
+                    await markLevelAsCelebrated(currentLevel);
+                }}
+            />
         </ThemedBackground>
     );
 }

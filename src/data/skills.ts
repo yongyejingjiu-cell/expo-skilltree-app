@@ -31,17 +31,41 @@ const WEB_DEV_SKILLS: Skill[] = [
             '❌「==と===は同じ」→ === は型も比較する厳密な等価演算子。常に === を使おう。',
             '❌「let と const はどちらでもいい」→ 変更しないなら const、変更するなら let。',
         ],
-        quiz: {
-            question: '次のうち、JavaScriptの厳密等価演算子はどれ？',
-            choices: [
-                { label: '==', isCorrect: false },
-                { label: '===', isCorrect: true },
-                { label: '!=', isCorrect: false },
-                { label: '=>', isCorrect: false },
-            ],
-            explanation: '=== は「厳密等価演算子」で、値だけでなく型も比較します。常に === を使う習慣をつけましょう！',
-            xpReward: 30,
-        },
+        quizzes: [
+            {
+                question: '次のうち、JavaScriptの厳密等価演算子はどれ？',
+                choices: [
+                    { label: '==', isCorrect: false },
+                    { label: '===', isCorrect: true },
+                    { label: '!=', isCorrect: false },
+                    { label: '=>', isCorrect: false },
+                ],
+                explanation: '=== は「厳密等価演算子」で、値だけでなく型も比較します。常に === を使う習慣をつけましょう！',
+                xpReward: 30,
+            },
+            {
+                question: '再代入が不可能な変数を宣言するキーワードはどれ？',
+                choices: [
+                    { label: 'let', isCorrect: false },
+                    { label: 'var', isCorrect: false },
+                    { label: 'const', isCorrect: true },
+                    { label: 'fixed', isCorrect: false },
+                ],
+                explanation: 'constで宣言された変数は再代入ができません。値を変更しない場合は基本的にconstを使いましょう。',
+                xpReward: 30,
+            },
+            {
+                question: '次の関数の書き方のうち、「アロー関数」はどれ？',
+                choices: [
+                    { label: 'function() {}', isCorrect: false },
+                    { label: '() => {}', isCorrect: true },
+                    { label: 'sub {}', isCorrect: false },
+                    { label: 'def():', isCorrect: false },
+                ],
+                explanation: '() => {} のように「矢印」を使う書き方をアロー関数と呼び、モダンなJS開発の主流です。',
+                xpReward: 30,
+            },
+        ],
         detailContent: `JavaScriptは1995年に作られた言語です。今やフロントエンド、バックエンド、モバイルアプリまで作れる万能言語です。
 
 【基本構文】
@@ -69,17 +93,41 @@ const WEB_DEV_SKILLS: Skill[] = [
             '❌「型を付けるのは面倒なだけ」→ バグの早期発見、エディタの補完強化で開発効率UP。',
             '❌「anyを使えば楽」→ any は型チェックを無効にする「諦め」。なるべく具体的な型を使おう。',
         ],
-        quiz: {
-            question: 'TypeScriptのファイル拡張子として正しいのはどれ？',
-            choices: [
-                { label: '.java', isCorrect: false },
-                { label: '.ts', isCorrect: true },
-                { label: '.py', isCorrect: false },
-                { label: '.rb', isCorrect: false },
-            ],
-            explanation: 'TypeScriptのファイル拡張子は .ts（通常）と .tsx（JSXを含むReactコンポーネント）です。',
-            xpReward: 30,
-        },
+        quizzes: [
+            {
+                question: 'TypeScriptのファイル拡張子として正しいのはどれ？',
+                choices: [
+                    { label: '.java', isCorrect: false },
+                    { label: '.ts', isCorrect: true },
+                    { label: '.py', isCorrect: false },
+                    { label: '.rb', isCorrect: false },
+                ],
+                explanation: 'TypeScriptのファイル拡張子は .ts（通常）と .tsx（JSXを含むReactコンポーネント）です。',
+                xpReward: 30,
+            },
+            {
+                question: 'TypeScriptで、あらゆる型を許容してしまう（型チェックを無効化する）型はどれ？',
+                choices: [
+                    { label: 'all', isCorrect: false },
+                    { label: 'every', isCorrect: false },
+                    { label: 'any', isCorrect: true },
+                    { label: 'none', isCorrect: false },
+                ],
+                explanation: 'any型を使うとTypeScriptのメリットである型チェックが効かなくなります。極力避けましょう。',
+                xpReward: 30,
+            },
+            {
+                question: 'オブジェクトの構造（データの形）を定義する際によく使われるキーワードは？',
+                choices: [
+                    { label: 'interface', isCorrect: true },
+                    { label: 'struct', isCorrect: false },
+                    { label: 'form', isCorrect: false },
+                    { label: 'outline', isCorrect: false },
+                ],
+                explanation: 'interface を使うことで、オブジェクトがどのようなプロパティを持つべきか定義できます。',
+                xpReward: 35,
+            },
+        ],
         detailContent: `TypeScriptはMicrosoftが2012年に開発した言語です。
 
 【型の例】
@@ -107,17 +155,41 @@ const WEB_DEV_SKILLS: Skill[] = [
             '❌「クラスコンポーネントで書くべき」→ 現在は関数コンポーネント + Hooks が主流。',
             '❌「stateを直接書き換えてOK」→ 必ず setState 等で更新。',
         ],
-        quiz: {
-            question: 'Reactでstateを更新するとき、正しいのはどれ？',
-            choices: [
-                { label: 'state.count = 1 と直接代入する', isCorrect: false },
-                { label: 'setState や setCount で更新する', isCorrect: true },
-                { label: 'document.getElementById で変更する', isCorrect: false },
-                { label: 'グローバル変数に保存する', isCorrect: false },
-            ],
-            explanation: 'Reactでは state の更新は必ずセッター関数を使います。',
-            xpReward: 35,
-        },
+        quizzes: [
+            {
+                question: 'Reactでstateを更新するとき、正しいのはどれ？',
+                choices: [
+                    { label: 'state.count = 1 と直接代入する', isCorrect: false },
+                    { label: 'setState や setCount で更新する', isCorrect: true },
+                    { label: 'document.getElementById で変更する', isCorrect: false },
+                    { label: 'グローバル変数に保存する', isCorrect: false },
+                ],
+                explanation: 'Reactでは state の更新は必ずセッター関数を使います。',
+                xpReward: 35,
+            },
+            {
+                question: 'ReactのUI部品の最小単位のことを何と呼ぶ？',
+                choices: [
+                    { label: 'テンプレート', isCorrect: false },
+                    { label: 'パーツ', isCorrect: false },
+                    { label: 'コンポーネント', isCorrect: true },
+                    { label: 'エレメント', isCorrect: false },
+                ],
+                explanation: 'ReactではUIを「コンポーネント」という独立した部品として作成し、組み合わせて画面を作ります。',
+                xpReward: 35,
+            },
+            {
+                question: '関数コンポーネントで状態を扱うための仕組みを総称して何と呼ぶ？',
+                choices: [
+                    { label: 'Plugins', isCorrect: false },
+                    { label: 'Hooks', isCorrect: true },
+                    { label: 'Actions', isCorrect: false },
+                    { label: 'Triggers', isCorrect: false },
+                ],
+                explanation: 'useStateやuseEffectなどの「Hooks」を使うことで、関数コンポーネントに様々な機能を持たせられます。',
+                xpReward: 35,
+            },
+        ],
         detailContent: `React（リアクト）はFacebook（現Meta）が2013年にオープンソース化したUIライブラリです。このアプリもReactベースです！`,
     },
     {
@@ -139,17 +211,41 @@ const WEB_DEV_SKILLS: Skill[] = [
             '❌「フロントエンド開発には不要」→ 開発ツールの基盤として必須。',
             '❌「Node.jsは遅い」→ I/O処理は非常に速い。',
         ],
-        quiz: {
-            question: 'Node.jsの説明として正しいのはどれ？',
-            choices: [
-                { label: 'Javaの実行環境', isCorrect: false },
-                { label: 'ブラウザ上のみで動くツール', isCorrect: false },
-                { label: 'サーバーサイドのJavaScript実行環境', isCorrect: true },
-                { label: 'CSSフレームワーク', isCorrect: false },
-            ],
-            explanation: 'Node.jsはV8エンジンでサーバーサイドでJavaScriptを実行できる環境です。',
-            xpReward: 30,
-        },
+        quizzes: [
+            {
+                question: 'Node.jsの説明として正しいのはどれ？',
+                choices: [
+                    { label: 'Javaの実行環境', isCorrect: false },
+                    { label: 'ブラウザ上のみで動くツール', isCorrect: false },
+                    { label: 'サーバーサイドのJavaScript実行環境', isCorrect: true },
+                    { label: 'CSSフレームワーク', isCorrect: false },
+                ],
+                explanation: 'Node.jsはV8エンジンでサーバーサイドでJavaScriptを実行できる環境です。',
+                xpReward: 30,
+            },
+            {
+                question: 'Node.jsでパッケージ（ライブラリ）を管理するための標準的なツールは？',
+                choices: [
+                    { label: 'pip', isCorrect: false },
+                    { label: 'npm', isCorrect: true },
+                    { label: 'git', isCorrect: false },
+                    { label: 'maven', isCorrect: false },
+                ],
+                explanation: 'npm (Node Package Manager) を使うことで、世界中の便利なライブラリを簡単に導入できます。',
+                xpReward: 30,
+            },
+            {
+                question: 'Node.jsが大量のアクセスを効率よく捌ける理由の一つはどれ？',
+                choices: [
+                    { label: '全処理を同期的に行うから', isCorrect: false },
+                    { label: 'ノンブロッキングI/Oを採用しているから', isCorrect: true },
+                    { label: 'コンピュータの電源を切らないから', isCorrect: false },
+                    { label: 'メモリ消費がゼロだから', isCorrect: false },
+                ],
+                explanation: 'ノンブロッキングI/Oにより、重い処理の完了を待たずに次のリクエストを処理できるため、効率的です。',
+                xpReward: 35,
+            },
+        ],
         detailContent: `Node.js（ノード・ジェイエス）は2009年に開発されたJavaScript実行環境です。このアプリの開発環境もNode.jsで動いています！`,
     },
     // ===== Concept =====
@@ -171,17 +267,41 @@ const WEB_DEV_SKILLS: Skill[] = [
             '❌「APIを使う＝プログラミング上級者」→ 初心者でも使えるものが多い。',
             '❌「APIは全て無料」→ 商用APIは利用回数に応じて課金されることが多い。',
         ],
-        quiz: {
-            question: 'REST APIでデータを取得するHTTPメソッドはどれ？',
-            choices: [
-                { label: 'POST', isCorrect: false },
-                { label: 'DELETE', isCorrect: false },
-                { label: 'PUT', isCorrect: false },
-                { label: 'GET', isCorrect: true },
-            ],
-            explanation: 'GETはデータを「取得」するためのHTTPメソッドです。',
-            xpReward: 25,
-        },
+        quizzes: [
+            {
+                question: 'REST APIでデータを取得するHTTPメソッドはどれ？',
+                choices: [
+                    { label: 'POST', isCorrect: false },
+                    { label: 'DELETE', isCorrect: false },
+                    { label: 'PUT', isCorrect: false },
+                    { label: 'GET', isCorrect: true },
+                ],
+                explanation: 'GETはデータを「取得」するためのHTTPメソッドです。',
+                xpReward: 25,
+            },
+            {
+                question: '現代のWeb APIで、データのやり取りに最も一般的に使われる形式はどれ？',
+                choices: [
+                    { label: 'XML', isCorrect: false },
+                    { label: 'JSON', isCorrect: true },
+                    { label: 'CSV', isCorrect: false },
+                    { label: 'TXT', isCorrect: false },
+                ],
+                explanation: 'JSON (JavaScript Object Notation) は軽量で人間にも読みやすいため、標準的なデータ形式として広く使われています。',
+                xpReward: 25,
+            },
+            {
+                question: 'REST APIにおいて、新しくデータを作成（登録）するために使われるメソッドは？',
+                choices: [
+                    { label: 'GET', isCorrect: false },
+                    { label: 'DELETE', isCorrect: false },
+                    { label: 'POST', isCorrect: true },
+                    { label: 'UPDATE', isCorrect: false },
+                ],
+                explanation: 'POSTメソッドは、サーバーに新しいリソースを送信・作成する際によく使われます。',
+                xpReward: 30,
+            },
+        ],
         detailContent: `API（Application Programming Interface）は、ソフトウェア同士が機能やデータを共有するための仕組みです。
 
 【REST APIの基本】
@@ -208,17 +328,41 @@ DELETE /users/1 → ID=1のユーザーを削除`,
             '❌「commitするとみんなに見える」→ pushして初めてリモートに反映される。',
             '❌「間違えたら取り返しがつかない」→ git resetなどで元に戻せる。',
         ],
-        quiz: {
-            question: 'Gitでローカルの変更をリモートリポジトリに反映するコマンドは？',
-            choices: [
-                { label: 'git commit', isCorrect: false },
-                { label: 'git pull', isCorrect: false },
-                { label: 'git push', isCorrect: true },
-                { label: 'git merge', isCorrect: false },
-            ],
-            explanation: 'git pushはローカルのcommit履歴をリモートリポジトリに送信するコマンドです。',
-            xpReward: 25,
-        },
+        quizzes: [
+            {
+                question: 'Gitでローカルの変更をリモートリポジトリに反映するコマンドは？',
+                choices: [
+                    { label: 'git commit', isCorrect: false },
+                    { label: 'git pull', isCorrect: false },
+                    { label: 'git push', isCorrect: true },
+                    { label: 'git merge', isCorrect: false },
+                ],
+                explanation: 'git pushはローカルのcommit履歴をリモートリポジトリに送信するコマンドです。',
+                xpReward: 25,
+            },
+            {
+                question: 'Gitで作業内容を記録（保存）することを何と呼ぶ？',
+                choices: [
+                    { label: 'record', isCorrect: false },
+                    { label: 'save', isCorrect: false },
+                    { label: 'commit', isCorrect: true },
+                    { label: 'stash', isCorrect: false },
+                ],
+                explanation: 'commitを行うことで、その時点のコードの状態をメッセージと共に記録できます。',
+                xpReward: 25,
+            },
+            {
+                question: 'Gitのリモートリポジトリをホスティングしている代表的なWebサービスは？',
+                choices: [
+                    { label: 'GitServer', isCorrect: false },
+                    { label: 'CloudGit', isCorrect: false },
+                    { label: 'GitHub', isCorrect: true },
+                    { label: 'FBGit', isCorrect: false },
+                ],
+                explanation: 'GitHubは世界中で最も広く使われているGitリポジトリの共有サービスです。',
+                xpReward: 25,
+            },
+        ],
         detailContent: `Git（ギット）はリーナス・トーバルズが2005年に開発したバージョン管理システムです。
 
 【基本コマンド】

@@ -20,12 +20,12 @@ import { CompositeScreenProps, useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, MainTabParamList, UserProgress, Quest, Course, DailyQuestBoard } from '../types';
 import { colors, spacing, borderRadius, fontSizes, fontWeights, shadows } from '../theme';
-import { loadUserProgress, completeQuest } from '../storage';
+import { loadUserProgress, completeQuest, markLevelAsCelebrated } from '../storage';
 import { getCourseById, generateCourseQuestBoard } from '../data/courses';
 import { generateDailyQuestBoard } from '../data/quests';
 import { hapticFeedback } from '../utils/haptics';
 import { useTheme } from '../context/ThemeContext';
-import { ThemedBackground } from '../components';
+import { ThemedBackground, LevelUpModal } from '../components';
 
 type Props = CompositeScreenProps<
     BottomTabScreenProps<MainTabParamList, 'QuestsTab'>,
@@ -43,12 +43,20 @@ export default function QuestBoardScreen({ navigation }: Props) {
     const { colors: themeColors } = theme;
     const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
     const [refreshing, setRefreshing] = useState(false);
+    const [showLevelUp, setShowLevelUp] = useState(false);
+    const [lastLevel, setLastLevel] = useState(1);
 
     // データ読み込み
     const loadData = useCallback(async () => {
         try {
             const progress = await loadUserProgress();
             setUserProgress(progress);
+            setLastLevel(progress.level);
+
+            // 未お祝いのレベルアップがあれば表示
+            if (progress.level > (progress.lastCelebratedLevel || 1)) {
+                setShowLevelUp(true);
+            }
         } catch (error) {
             console.error('Failed to load data:', error);
         }
@@ -87,6 +95,13 @@ export default function QuestBoardScreen({ navigation }: Props) {
                     onPress: async () => {
                         try {
                             const updatedProgress = await completeQuest(quest.id, quest.xpReward);
+
+                            // レベルアップ判定
+                            if (updatedProgress.level > (updatedProgress.lastCelebratedLevel || 1)) {
+                                setShowLevelUp(true);
+                                setLastLevel(updatedProgress.level);
+                            }
+
                             setUserProgress(updatedProgress);
 
                             // 触覚フィードバック
@@ -283,6 +298,15 @@ export default function QuestBoardScreen({ navigation }: Props) {
                     </View>
                 </View>
             </ScrollView>
+
+            <LevelUpModal
+                visible={showLevelUp}
+                level={lastLevel}
+                onClose={async () => {
+                    setShowLevelUp(false);
+                    await markLevelAsCelebrated(lastLevel);
+                }}
+            />
         </ThemedBackground>
     );
 }

@@ -18,9 +18,21 @@ interface QuizCardProps {
     quiz: SkillQuiz;
     alreadyAnswered: boolean;
     onCorrectAnswer: () => void;
+    currentQuizIndex: number;
+    totalQuizzes: number;
+    onNextQuiz?: () => void;
+    allQuizzesCleared: boolean;
 }
 
-export default function QuizCard({ quiz, alreadyAnswered, onCorrectAnswer }: QuizCardProps) {
+export default function QuizCard({
+    quiz,
+    alreadyAnswered,
+    onCorrectAnswer,
+    currentQuizIndex,
+    totalQuizzes,
+    onNextQuiz,
+    allQuizzesCleared,
+}: QuizCardProps) {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [showResult, setShowResult] = useState(false);
     const isCorrect = selectedIndex !== null && quiz.choices[selectedIndex].isCorrect;
@@ -38,18 +50,18 @@ export default function QuizCard({ quiz, alreadyAnswered, onCorrectAnswer }: Qui
         }
     };
 
-    // 既に回答済みの場合
-    if (alreadyAnswered) {
+    // 全問題クリア済みの場合
+    if (allQuizzesCleared) {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headerIcon}>📝</Text>
-                    <Text style={styles.headerTitle}>ミニクイズ</Text>
+                    <Text style={styles.headerIcon}>✨</Text>
+                    <Text style={styles.headerTitle}>コンプリート！</Text>
                 </View>
-                <View style={styles.answeredCard}>
-                    <Text style={styles.answeredIcon}>✅</Text>
-                    <Text style={styles.answeredText}>今日はすでにクリア済み！</Text>
-                    <Text style={styles.answeredXP}>+{quiz.xpReward} XP 獲得済み</Text>
+                <View style={[styles.answeredCard, { borderColor: colors.accent }]}>
+                    <Text style={styles.answeredIcon}>🏆</Text>
+                    <Text style={[styles.answeredText, { color: colors.accent }]}>このスキルの全クイズをクリア！</Text>
+                    <Text style={styles.answeredXP}>マスターへの道が一歩進みました</Text>
                 </View>
             </View>
         );
@@ -60,7 +72,7 @@ export default function QuizCard({ quiz, alreadyAnswered, onCorrectAnswer }: Qui
             {/* ヘッダー */}
             <View style={styles.header}>
                 <Text style={styles.headerIcon}>📝</Text>
-                <Text style={styles.headerTitle}>ミニクイズ</Text>
+                <Text style={styles.headerTitle}>ミニクイズ ({currentQuizIndex + 1}/{totalQuizzes})</Text>
                 <View style={styles.xpBadge}>
                     <Text style={styles.xpText}>⭐ +{quiz.xpReward} XP</Text>
                 </View>
@@ -100,8 +112,8 @@ export default function QuizCard({ quiz, alreadyAnswered, onCorrectAnswer }: Qui
                             key={index}
                             style={choiceStyle}
                             onPress={() => handleSelect(index)}
-                            activeOpacity={showResult ? 1 : 0.7}
-                            disabled={showResult}
+                            activeOpacity={alreadyAnswered || showResult ? 1 : 0.7}
+                            disabled={alreadyAnswered || showResult}
                         >
                             <View style={[
                                 styles.choiceLabel,
@@ -162,6 +174,31 @@ export default function QuizCard({ quiz, alreadyAnswered, onCorrectAnswer }: Qui
                         )}
                     </View>
                     <Text style={styles.explanationText}>{quiz.explanation}</Text>
+
+                    {isCorrect && onNextQuiz && currentQuizIndex < totalQuizzes - 1 && (
+                        <TouchableOpacity
+                            style={styles.nextButton}
+                            onPress={() => {
+                                setShowResult(false);
+                                setSelectedIndex(null);
+                                onNextQuiz();
+                            }}
+                        >
+                            <Text style={styles.nextButtonText}>次の問題へ進む！</Text>
+                        </TouchableOpacity>
+                    )}
+
+                    {!isCorrect && (
+                        <TouchableOpacity
+                            style={styles.retryButton}
+                            onPress={() => {
+                                setShowResult(false);
+                                setSelectedIndex(null);
+                            }}
+                        >
+                            <Text style={styles.retryButtonText}>もう一度挑戦</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             )}
         </View>
@@ -342,6 +379,31 @@ const styles = StyleSheet.create({
         fontSize: fontSizes.md,
         color: colors.textSecondary,
         lineHeight: 22,
+        marginBottom: spacing.md,
+    },
+    nextButton: {
+        backgroundColor: colors.success,
+        borderRadius: borderRadius.md,
+        paddingVertical: spacing.sm,
+        alignItems: 'center',
+        marginTop: spacing.sm,
+    },
+    nextButtonText: {
+        fontSize: fontSizes.md,
+        fontWeight: fontWeights.bold,
+        color: '#FFFFFF',
+    },
+    retryButton: {
+        backgroundColor: colors.primary,
+        borderRadius: borderRadius.md,
+        paddingVertical: spacing.sm,
+        alignItems: 'center',
+        marginTop: spacing.md,
+    },
+    retryButtonText: {
+        fontSize: fontSizes.md,
+        fontWeight: fontWeights.bold,
+        color: '#FFFFFF',
     },
     answeredCard: {
         backgroundColor: colors.backgroundCard,

@@ -20,7 +20,7 @@ import { CompositeScreenProps, useFocusEffect } from '@react-navigation/native';
 import { RootStackParamList, MainTabParamList, UserProgress, Course, DailyQuestBoard, SocialUser } from '../types';
 import { colors, spacing, borderRadius, fontSizes, fontWeights, shadows } from '../theme';
 import { XPBar, MyAvatar, ScaleButton, LevelUpModal } from '../components';
-import { loadUserProgress, getLevelProgress } from '../storage';
+import { loadUserProgress, getLevelProgress, markLevelAsCelebrated } from '../storage';
 import { getCourseById, generateCourseQuestBoard, COURSES } from '../data/courses';
 import { generateDailyQuestBoard } from '../data/quests';
 import { generateMockLeaderboardData } from '../data/mockSocial';
@@ -32,14 +32,12 @@ type Props = CompositeScreenProps<
     NativeStackScreenProps<RootStackParamList>
 >;
 
-
-
 export default function HomeScreen({ navigation }: Props) {
     const insets = useSafeAreaInsets();
     const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [showLevelUp, setShowLevelUp] = useState(false);
-    const prevLevelRef = useRef<number | null>(null);
+    const [currentLevel, setCurrentLevel] = useState(1);
     const [myRank, setMyRank] = useState<SocialUser | null>(null);
     const [nextRivalXP, setNextRivalXP] = useState<number>(0);
 
@@ -48,11 +46,11 @@ export default function HomeScreen({ navigation }: Props) {
         try {
             const progress = await loadUserProgress();
 
-            // レベルアップ判定
-            if (prevLevelRef.current !== null && progress.level > prevLevelRef.current) {
+            // レベルアップ判定 (未お祝いのレベルアップがあるか)
+            if (progress.level > (progress.lastCelebratedLevel || 1)) {
                 setShowLevelUp(true);
+                setCurrentLevel(progress.level);
             }
-            prevLevelRef.current = progress.level;
 
             setUserProgress(progress);
 
@@ -94,8 +92,15 @@ export default function HomeScreen({ navigation }: Props) {
         setRefreshing(false);
     }, [loadData]);
 
-    const handleLevelUpClose = () => {
+    const handleLevelUpClose = async () => {
         setShowLevelUp(false);
+        if (currentLevel > 1) {
+            await markLevelAsCelebrated(currentLevel);
+            // 内部状態も更新
+            if (userProgress) {
+                setUserProgress({ ...userProgress, lastCelebratedLevel: currentLevel });
+            }
+        }
     };
 
     // コース選択画面へ遷移
@@ -147,12 +152,6 @@ export default function HomeScreen({ navigation }: Props) {
     return (
         <ThemedBackground style={styles.container}>
             <StatusBar barStyle={theme.type === 'day' ? "dark-content" : "light-content"} backgroundColor="transparent" translucent />
-
-            <LevelUpModal
-                visible={showLevelUp}
-                level={userProgress.level}
-                onClose={handleLevelUpClose}
-            />
 
             <ScrollView
                 style={styles.scrollView}
@@ -361,6 +360,12 @@ export default function HomeScreen({ navigation }: Props) {
                     </View>
                 </View>
             </ScrollView>
+
+            <LevelUpModal
+                visible={showLevelUp}
+                level={currentLevel}
+                onClose={handleLevelUpClose}
+            />
         </ThemedBackground>
     );
 }

@@ -123,6 +123,7 @@ export interface UserProgress {
     currentAvatar: AvatarParts;         // アバター装備
     unlockedAvatarItems: string[];      // 解放済みアイテムIDリスト
     title?: string;                     // Phase6: 獲得した称号
+    lastCelebratedLevel?: number;       // すでにお祝い演出を表示した最終レベル
 }
 
 /**
@@ -178,7 +179,8 @@ export interface Skill {
     prerequisiteIds?: SkillId[];   // 習得条件（前提スキルのID）
     keyPoints: string[];           // これだけ覚えろ3点（配列）
     misconceptions: string[];     // よくある勘違い（配列）
-    quiz: SkillQuiz;              // ミニクイズ1問
+    quiz?: SkillQuiz;              // 【レガシー】ミニクイズ1問
+    quizzes: SkillQuiz[];         // ミニクイズ（複数問）
     detailContent: string;        // 詳細解説（長文テキスト）
     difficulty: 1 | 2 | 3;        // 難易度 ★
     color: string;                // テーマカラー

@@ -22,17 +22,41 @@ export const APPLIED_IT_SKILLS: Skill[] = [
             '❌「冗長化すれば可用性は100%」→ 99.999%（ファイブナイン）でも年5分のダウンタイムがある。',
             '❌「スケールアップとスケールアウトは同じ」→ 前者はスペック向上、後者は台数増加。',
         ],
-        quiz: {
-            question: 'MTBF=950時間、MTTR=50時間のシステムの稼働率は？',
-            choices: [
-                { label: '90%', isCorrect: false },
-                { label: '95%', isCorrect: true },
-                { label: '99%', isCorrect: false },
-                { label: '50%', isCorrect: false },
-            ],
-            explanation: '稼働率 = MTBF / (MTBF + MTTR) = 950 / (950 + 50) = 0.95 = 95%',
-            xpReward: 35,
-        },
+        quizzes: [
+            {
+                question: 'MTBF=950時間、MTTR=50時間のシステムの稼働率は？',
+                choices: [
+                    { label: '90%', isCorrect: false },
+                    { label: '95%', isCorrect: true },
+                    { label: '99%', isCorrect: false },
+                    { label: '50%', isCorrect: false },
+                ],
+                explanation: '稼働率 = MTBF / (MTBF + MTTR) = 950 / (950 + 50) = 0.95 = 95%',
+                xpReward: 35,
+            },
+            {
+                question: 'システムの台数を増やすことで処理能力を向上させることを何という？',
+                choices: [
+                    { label: 'スケールアップ', isCorrect: false },
+                    { label: 'スケールアウト', isCorrect: true },
+                    { label: 'スケールイン', isCorrect: false },
+                    { label: 'スケールダウン', isCorrect: false },
+                ],
+                explanation: 'スケールアウトは、同等の性能のハードウェアを複数台連結して性能を向上させる手法です。',
+                xpReward: 35,
+            },
+            {
+                question: '3層クライアントサーバシステムの構成要素として適切な組み合わせは？',
+                choices: [
+                    { label: 'プレゼンテーション層、ファンクション層、データ層', isCorrect: true },
+                    { label: 'UI層、ネットワーク層、ハードウェア層', isCorrect: false },
+                    { label: 'OS層、ミドルウェア層、アプリ層', isCorrect: false },
+                    { label: '入力層、隠れ層、出力層', isCorrect: false },
+                ],
+                explanation: '利用者の操作を受ける「プレゼンテーション層」、業務処理を行う「ファンクション（アプリケーション）層」、データを管理する「データ層」の3つに分割します。',
+                xpReward: 40,
+            },
+        ],
         detailContent: `システムアーキテクチャは応用情報の午後問題でも頻出です。
 
 【稼働率の計算】
@@ -62,17 +86,41 @@ export const APPLIED_IT_SKILLS: Skill[] = [
             '❌「リスクはゼロにできる」→ リスクの受容、回避、転嫁、低減から適切に選択する。',
             '❌「脆弱性=すぐに攻撃される」→ 脅威×脆弱性=リスク。脅威がなければリスクは低い。',
         ],
-        quiz: {
-            question: 'SQLインジェクションの対策として最も効果的なのは？',
-            choices: [
-                { label: 'ファイアウォールの導入', isCorrect: false },
-                { label: 'プレースホルダ（バインド変数）の使用', isCorrect: true },
-                { label: 'パスワードの強化', isCorrect: false },
-                { label: 'SSL/TLSの導入', isCorrect: false },
-            ],
-            explanation: 'プレースホルダを使うことで、ユーザー入力がSQL文として解釈されることを防ぎます。',
-            xpReward: 35,
-        },
+        quizzes: [
+            {
+                question: 'SQLインジェクションの対策として最も効果的なのは？',
+                choices: [
+                    { label: 'ファイアウォールの導入', isCorrect: false },
+                    { label: 'プレースホルダ（バインド変数）の使用', isCorrect: true },
+                    { label: 'パスワードの強化', isCorrect: false },
+                    { label: 'SSL/TLSの導入', isCorrect: false },
+                ],
+                explanation: 'プレースホルダを使うことで、ユーザー入力がSQL文として解釈されることを防ぎます。',
+                xpReward: 35,
+            },
+            {
+                question: 'リスク対応のうち、リスクを他者に引き受けてもらう（保険への加入など）ことを何という？',
+                choices: [
+                    { label: 'リスク回避', isCorrect: false },
+                    { label: 'リスク受容', isCorrect: false },
+                    { label: 'リスク転嫁（共有）', isCorrect: true },
+                    { label: 'リスク低減', isCorrect: false },
+                ],
+                explanation: 'リスク転嫁は、保険加入やアウトソーシングによって、リスクの影響を第三者に移転することです。',
+                xpReward: 35,
+            },
+            {
+                question: '情報セキュリティの3要素（CIA）に含まれないものはどれ？',
+                choices: [
+                    { label: '機密性 (Confidentiality)', isCorrect: false },
+                    { label: '完全性 (Integrity)', isCorrect: false },
+                    { label: '可用性 (Availability)', isCorrect: false },
+                    { label: '即時性 (Immediacy)', isCorrect: true },
+                ],
+                explanation: 'セキュリティの3要素は、認可された人だけが使える「機密性」、正確さを保つ「完全性」、必要な時に使える「可用性」です。',
+                xpReward: 30,
+            },
+        ],
         detailContent: `応用情報のセキュリティ分野は午後問題の選択肢としても重要です。
 
 【主な攻撃手法】
@@ -103,17 +151,41 @@ export const APPLIED_IT_SKILLS: Skill[] = [
             '❌「正規化すれば常にパフォーマンスが良い」→ JOINが増えるのでケースバイケース。',
             '❌「ビューは実データを持つ」→ ビューは仮想テーブルで実データは持たない（マテビュー除く）。',
         ],
-        quiz: {
-            question: 'B+木インデックスの特徴として正しいのはどれ？',
-            choices: [
-                { label: '全ノードにデータが格納される', isCorrect: false },
-                { label: 'リーフノードのみにデータが格納される', isCorrect: true },
-                { label: '線形探索と同じ計算量', isCorrect: false },
-                { label: 'ソートされていない', isCorrect: false },
-            ],
-            explanation: 'B+木ではリーフノードにのみデータへのポインタが格納され、リーフ同士がリンクで繋がっているため範囲検索も効率的です。',
-            xpReward: 35,
-        },
+        quizzes: [
+            {
+                question: 'B+木インデックスの特徴として正しいのはどれ？',
+                choices: [
+                    { label: '全ノードにデータが格納される', isCorrect: false },
+                    { label: 'リーフノードのみに実データへのポインタ（またはデータ）が格納される', isCorrect: true },
+                    { label: '線形探索と同じ計算速度である', isCorrect: false },
+                    { label: '常に全件スキャンを行う', isCorrect: false },
+                ],
+                explanation: 'B+木ではリーフノードにのみデータ（またはポインタ）が格納され、リーフ同士が繋がっているため範囲検索も高速です。',
+                xpReward: 35,
+            },
+            {
+                question: '関係データベースにおいて、部分関数従属を排除し、主キーに完全関数従属するようにする操作を何という？',
+                choices: [
+                    { label: '第1正規化', isCorrect: false },
+                    { label: '第2正規化', isCorrect: true },
+                    { label: '第3正規化', isCorrect: false },
+                    { label: '非正規化', isCorrect: false },
+                ],
+                explanation: '第2正規化は、主キーの一部に従属する列を別のテーブルに分離し、完全関数従属な状態にする操作です。',
+                xpReward: 40,
+            },
+            {
+                question: 'データベースの性能を向上させるために、結合(JOIN)を減らす目的で正規化を崩すことを何という？',
+                choices: [
+                    { label: '再正規化', isCorrect: false },
+                    { label: '非正規化（逆正規化）', isCorrect: true },
+                    { label: 'インデックス最適化', isCorrect: false },
+                    { label: 'デッドロック回避', isCorrect: false },
+                ],
+                explanation: '参照パフォーマンス向上のために、あえて重複を許容して正規化を戻すことを非正規化と呼びます。',
+                xpReward: 35,
+            },
+        ],
         detailContent: `応用情報のデータベース分野では、設計力が問われます。
 
 【ER図の読み方】
@@ -145,17 +217,41 @@ export const APPLIED_IT_SKILLS: Skill[] = [
             '❌「クリティカルパスは1つだけ」→ 複数存在する場合もある。',
             '❌「余裕日数がある作業は遅れてもOK」→ 余裕を使い切ると新たなクリティカルパスになる。',
         ],
-        quiz: {
-            question: 'EVM指標でSPI(スケジュール効率指数)が0.8の場合、何を意味する？',
-            choices: [
-                { label: '計画より20%進んでいる', isCorrect: false },
-                { label: '計画より20%遅れている', isCorrect: true },
-                { label: 'コストが20%超過', isCorrect: false },
-                { label: '品質が80%達成', isCorrect: false },
-            ],
-            explanation: 'SPI = EV/PV です。0.8ということは計画(PV)に対して実績(EV)が80%しか進んでいない＝20%遅れています。',
-            xpReward: 30,
-        },
+        quizzes: [
+            {
+                question: 'EVM指標でSPI(スケジュール効率指数)が0.8の場合、何を意味する？',
+                choices: [
+                    { label: '計画より20%進んでいる', isCorrect: false },
+                    { label: '計画より20%遅れている', isCorrect: true },
+                    { label: 'コストが20%超過している', isCorrect: false },
+                    { label: '品質が80%である', isCorrect: false },
+                ],
+                explanation: 'SPI = EV/PV です。0.8は計画(PV)に対して実績(EV)が80%しか進んでいない（20%遅延）ことを表します。',
+                xpReward: 30,
+            },
+            {
+                question: 'アローダイアグラムにおいて、作業の開始から終了までの経路のうち、所要日数が最も長い経路を何という？',
+                choices: [
+                    { label: '最短経路', isCorrect: false },
+                    { label: 'クリティカルパス', isCorrect: true },
+                    { label: 'ゴールデンルート', isCorrect: false },
+                    { label: 'ボトルネック', isCorrect: false },
+                ],
+                explanation: 'クリティカルパスは、プロジェクト全体の期間を決定する最も重要な経路です。',
+                xpReward: 35,
+            },
+            {
+                question: 'コスト効率指数 (CPI) = 1.2 の状態を正しく説明しているのはどれ？',
+                choices: [
+                    { label: '予算が足りなくなっている', isCorrect: false },
+                    { label: '予算の範囲内で順調にコストを抑えられている', isCorrect: true },
+                    { label: 'スケジュールが遅れている', isCorrect: false },
+                    { label: '品質に問題がある', isCorrect: false },
+                ],
+                explanation: 'CPI = EV/AC です。1より大きい場合は、使った費用(AC)以上の成果(EV)が出ている「予算を下回る（順調な）」状態です。',
+                xpReward: 35,
+            },
+        ],
         detailContent: `プロジェクトマネジメントは午後の選択問題で出題されます。
 
 【EVM（アーンドバリューマネジメント）】
